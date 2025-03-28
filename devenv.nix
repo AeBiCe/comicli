@@ -10,6 +10,7 @@
     venv.enable = true;
     venv.requirements = ''
       typer
+      pydantic
     '';
   };
 
