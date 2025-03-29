@@ -1,0 +1,15 @@
+[project]
+name = "comicli"
+version = "0.0.1"
+description = ""
+authors = [
+    {name = "AeBiCe",email = "info@aebice.net"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "typer (>=0.15.2,<0.16.0)"
+]
+
+[project.scripts]
+comicli = "app:app"

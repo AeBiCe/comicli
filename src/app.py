@@ -1,15 +1,23 @@
 import typer
-import pathlib
+
+import directories
+import constants
+
+from rich import print
 
 
-def main(name: str):
-    """Test application that greets people
+app = typer.Typer(no_args_is_help=True)
 
-    Args:
-        name (str): The person to greet
-    """
-    print(f"Hello {name}!")
+
+@app.command()
+def logo():
+    print(constants.LOGO)
+
+
+@app.command()
+def scan():
+    print(directories.scan())
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()
