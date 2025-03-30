@@ -1,3 +1,9 @@
+# VS Code
+.vscode
+
+# Testing dir
+.comic
+
 # Devenv
 .devenv*
 devenv.local.nix

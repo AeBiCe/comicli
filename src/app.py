@@ -3,9 +3,6 @@ import typer
 import directories
 import constants
 
-from rich import print
-
-
 app = typer.Typer(no_args_is_help=True)
 
 
@@ -16,7 +13,11 @@ def logo():
 
 @app.command()
 def scan():
-    print(directories.scan())
+    dirs = directories.get_dirs()
+    for dir in dirs:
+        if directories.dir_contains_only_images(dir):
+            print(f"{dir.name} is able to become a comic :party_popper:")
+    print("Done searching!")
 
 
 if __name__ == "__main__":
