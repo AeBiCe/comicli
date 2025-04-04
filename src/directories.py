@@ -13,5 +13,9 @@ def get_file_names(path: Path, with_extension: bool = True) -> list[str]:
     return [x.name if with_extension else x.stem for x in get_files(path)]
 
 
+def get_file_extensions(path: Path) -> set[str]:
+    return {x.suffix for x in get_files(path)}
+
+
 def file_in_dir(filename: str, directory: Path) -> bool:
     return filename in get_file_names(directory, False)
