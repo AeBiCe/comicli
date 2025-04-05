@@ -7,6 +7,22 @@ from pydantic import BaseModel
 
 app = typer.Typer(no_args_is_help=True)
 
+"""
+
+Create a class from a directory and inhert title, issue and pages
+from the directory. Add the function as class methods and improve
+validation of fields and function with pydantic 
+
+"""
+
+
+class Comic(BaseModel):
+    path: Path
+    title: str
+    issue: int
+    pages: int
+    publisher: str
+
 
 @app.command()
 def create(directory: Path, save_location: Path = Path(".")):
