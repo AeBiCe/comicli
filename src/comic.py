@@ -1,6 +1,7 @@
 from pathlib import Path
 import zipfile
 import typer
+import re
 import exceptions, directories
 from pydantic import BaseModel
 
@@ -19,21 +20,37 @@ def create(directory: Path, save_location: Path = Path(".")):
 
 def validate(path: Path):
     """Perform various validation tests"""
-    return _validate_file_extensions(path) and _validate_file_order(path)
+    _validate_file_extensions(path)
+    _validate_file_order(path)
 
 
-def _validate_file_extensions(path: Path) -> bool:
+def _validate_file_extensions(path: Path):
     """Validate that the directory only contains images"""
     for file in directories.get_files(path=path):
         if file.suffix.lower() not in {".jpg", ".jpeg", ".png"}:
-            return False
-    return True
+            raise exceptions.ValidationError(f"{file.name} is not an image")
+
+
+def _get_page_from_name(filename: str):
+    return int(re.findall(r"\d+", filename)[-1])
+
+
+def get_pages(path: Path):
+    files = directories.get_file_names(path=path, with_extension=False)
+    files = [_get_page_from_name(file) for file in files]
+    files.sort()
+    return files
+
+
+def find_missing_pages(path: Path) -> list[int]:
+    pages = get_pages(path)
+    return [page not in range(pages[-1]) for page in pages]
 
 
 def _validate_file_order(path: Path):
     """Validate that no page (number) is missing"""
     files = directories.get_file_names(path=path, with_extension=False)
-    files = [int(file) for file in files]  # Assuming filenames are 1.png, 2.png..
+    files = [_get_page_from_name(file) for file in files]
     files.sort()
 
     for file in range(min(files), max(files)):
@@ -46,11 +63,3 @@ def _validate_file_order(path: Path):
 def _validate_no_duplicates(path: Path):
     """Validate that there are no dupllicate files"""
     pass
-
-
-class Comic(BaseModel):
-    path: Path
-    title: str
-    issue: int
-    pages: int
-    publisher: str
