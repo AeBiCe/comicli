@@ -4,24 +4,42 @@ import typer
 import re
 import exceptions, directories
 from pydantic import BaseModel
+from typing_extensions import Annotated
+from rich import print
 
 app = typer.Typer(no_args_is_help=True)
 
 
 @app.command()
-def create(directory: Path, save_location: Path = Path(".")):
-    print(f"Creating a comic archive of {directory.name}")
-    if not validate(directory):
-        raise exceptions.ValidationError(f"Error validating {directory}")
+def create(
+    directory: Annotated[Path, typer.Argument()],
+    save_location: Annotated[Path, typer.Argument()] = Path("."),
+    dry_run: Annotated[bool, typer.Option("--dry", "-d")] = False,
+):
+    try:
+        validate(directory)
+    except exceptions.ValidationError as err:
+        print(f":collision: Failed to validate the path :collision: \n{err}")
+        raise typer.Exit(code=1)
+    if dry_run:
+        print(f"Would create {save_location}/{directory.name}.cbz")
+        return
     with zipfile.ZipFile(f"{save_location}/{directory.name}.cbz", mode="w") as comic:
+        print(f"Creating a comic archive of {directory.name}")
         for file in directory.iterdir():
             comic.write(file, arcname=file.name)
 
 
 def validate(path: Path):
     """Perform various validation tests"""
+    _validate_is_dir(path)
     _validate_file_extensions(path)
     _validate_file_order(path)
+
+
+def _validate_is_dir(path: Path):
+    if not path.is_dir():
+        raise exceptions.ValidationError("Path is not a directory")
 
 
 def _validate_file_extensions(path: Path):
