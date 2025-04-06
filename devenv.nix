@@ -11,6 +11,8 @@
     venv.requirements = ''
       typer
       pydantic
+      isort
+      black
     '';
   };
 
