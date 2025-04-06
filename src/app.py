@@ -1,9 +1,12 @@
+from pathlib import Path
+
 import typer
+from rich import print
 from typing_extensions import Annotated
 
-from pathlib import Path
-import comic, constants, directories
-from rich import print
+import comic
+import constants
+import directories
 
 app = typer.Typer(no_args_is_help=True)
 app.add_typer(comic.app, name="comic")
@@ -15,17 +18,13 @@ def logo():
 
 
 @app.command()
-def scan(path: Annotated[str, typer.Argument()] = "."):
+def scan(
+    path: Annotated[Path, typer.Argument()] = Path("."),
+):
     directory = Path(path).absolute()
-    dirs = [
-        dir for dir in directories.get_dirs(directory) if len(list(dir.iterdir())) > 0
-    ]
 
-    print(f"Checking {directory}..")
-
-    for dir in dirs:
-        if directories.dir_contains_only_images(dir):
-            print(f"{dir.name} is comic material :book:")
+    comics = directories.find_comic_dirs(directory)
+    print(f"These directories are comic material :book: \n {comics}")
 
 
 if __name__ == "__main__":

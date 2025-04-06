@@ -1,6 +1,6 @@
 from pathlib import Path
 
-IMG_EXT = {".jpg", ".jpeg", ".png"}
+IMG_EXT = {".jpg", ".jpeg", ".png", ".xml"}
 
 
 def get_dirs(path: Path) -> list[Path]:
@@ -24,4 +24,17 @@ def file_in_dir(filename: str, directory: Path) -> bool:
 
 
 def dir_contains_only_images(path: Path) -> bool:
+    if len(get_files(path)) < 1:
+        return False
     return all(x.suffix.lower() in IMG_EXT for x in get_files(path))
+
+
+def find_comic_dirs(directory: Path) -> list[Path]:
+    comic_dirs = []
+    if dir_contains_only_images(directory):
+        comic_dirs.append(directory)
+
+    for dir in get_dirs(directory):
+        comic_dirs.extend(find_comic_dirs(dir))
+
+    return comic_dirs
