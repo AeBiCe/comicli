@@ -4,9 +4,9 @@ import typer
 from rich import print
 from typing_extensions import Annotated
 
-import comic
 import constants
 import directories
+from comic import comic
 
 app = typer.Typer(no_args_is_help=True)
 app.add_typer(comic.app, name="comic")
