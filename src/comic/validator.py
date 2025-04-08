@@ -6,6 +6,8 @@ import typer
 import directories
 from exceptions import ValidationError
 
+from rich import print
+
 
 def validate(path: Path):
     """Perform various validation tests"""
@@ -23,15 +25,14 @@ def validate_is_dir(path: Path):
         raise ValidationError("Path is not a directory")
 
 
-# WIP DOES NOT WORK AS OF NOW
 def validate_file_order(path: Path):
     """Validate that no page (number) is missing"""
     pages = _get_pages(path)
 
-    missing_pages = [page for page in pages if page not in range((pages[-1] + 1))]
+    missing_pages = [page for page in range(pages[0], pages[-1]) if page not in pages]
 
     if missing_pages:
-        raise ValidationError(f"Pages: {missing_pages} are missing")
+        raise ValidationError(f"Page(s): {missing_pages} are missing")
 
 
 def validate_file_extensions(path: Path):
