@@ -5,7 +5,7 @@ import typer
 
 import directories
 from exceptions import ValidationError
-
+from collections import Counter
 from rich import print
 
 
@@ -15,6 +15,7 @@ def validate(path: Path):
         validate_is_dir(path)
         validate_file_extensions(path)
         validate_file_order(path)
+        validate_no_duplicates(path)
     except ValidationError as err:
         print(f":collision: Validation error :collision: \n{err}")
         raise typer.Exit(code=1)
@@ -32,7 +33,7 @@ def validate_file_order(path: Path):
     missing_pages = [page for page in range(pages[0], pages[-1]) if page not in pages]
 
     if missing_pages:
-        raise ValidationError(f"Page(s): {missing_pages} are missing")
+        raise ValidationError(f"Missing page(s): {missing_pages}")
 
 
 def validate_file_extensions(path: Path):
@@ -53,6 +54,11 @@ def _get_pages(path: Path):
     return files
 
 
-def _validate_no_duplicates(path: Path):
+def validate_no_duplicates(path: Path):
     """Validate that there are no dupllicate files"""
+    pages = _get_pages(path)
+
+    if len(pages) > pages[-1]:
+        duplicates = [item for item, count in Counter(pages).items() if count > 1]
+        raise ValidationError(f"Duplicates Page(s): {duplicates}")
     pass
