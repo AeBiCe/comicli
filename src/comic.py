@@ -5,7 +5,7 @@ import typer
 from rich import print
 from typing_extensions import Annotated
 
-from .validator import validate
+from directories.validator import validate
 
 app = typer.Typer(no_args_is_help=True)
 

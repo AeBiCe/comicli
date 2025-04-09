@@ -3,10 +3,11 @@ from pathlib import Path
 
 import typer
 
-import directories
 from exceptions import ValidationError
 from collections import Counter
 from rich import print
+
+from . import directories
 
 
 def validate(path: Path):
