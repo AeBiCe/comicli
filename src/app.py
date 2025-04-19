@@ -2,6 +2,7 @@ from pathlib import Path
 
 import typer
 from rich import print
+from rich.tree import Tree
 from typing_extensions import Annotated
 
 import constants
@@ -24,7 +25,12 @@ def scan(
     directory = Path(path).absolute()
 
     comics = directories.find_comic_dirs(directory)
-    print(f"These directories are comic material :book: \n {comics}")
+
+    tree = Tree(str(path))
+    for comic in comics:
+        tree.add(str(comic.relative_to(directory)))
+
+    print("These directories can be converted to comics:", tree)
 
 
 if __name__ == "__main__":
